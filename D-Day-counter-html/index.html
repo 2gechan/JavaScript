@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>D-Day</title>
+    <script>
+      const output = function () {
+        console.log("함수를 실행했어요.");
+      };
+      output();
+    </script>
+  </head>
+  <body>
+    <!-- id는 중복되는 값을 사용해서는 안된다 -->
+    <!-- 여러 영역에 중복되는 tag들을 연결시키고 싶다면 class를 사용 -->
+    <div id="div-id" class="div-class">안녕하세요.</div>
+    <div class="div-class">반갑습니다.</div>
+    <input placeholder="내용을 입력하세요" />
+    <button onclick="output()">버튼</button>
+  </body>
+</html>
