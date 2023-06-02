@@ -3,18 +3,35 @@
   <head>
     <title>D-Day</title>
     <script>
-      const output = function () {
-        console.log("함수를 실행했어요.");
+      const dateFormMaker = function () {
+        const inputYear = document.querySelector("#target-year-input").value;
+        const inputMonth = document.querySelector("#target-month-input").value;
+        const inputDate = document.querySelector("#target-date-input").value;
+
+        // const dateFormat = inputYear + "-" + inputMonth + "-" + inputDate;
+        const dateFormat = `${inputYear}-${inputMonth}-${inputDate}`;
+        return dateFormat;
+        // console.log(inputYear, inputMonth, inputDate);
       };
-      output();
+
+      const counterMaker = function () {
+        const nowDate = new Date();
+        const dateFormat = dateFormMaker();
+        const targetDate = new Date(dateFormat).setHours(0, 0, 0, 0);
+        const remaining = (targetDate - nowDate) / 1000;
+
+        const remainingDate = Math.floor(remaining / 3600 / 24);
+        const remainingHours = Math.floor((remaining / 3600) % 24);
+        const remainingMin = Math.floor(remaining / 60) % 60;
+        const remaininSec = Math.floor(remaining % 60);
+        console.log(remainingDate, remainingHours, remainingMin, remaininSec);
+      };
     </script>
   </head>
   <body>
-    <!-- id는 중복되는 값을 사용해서는 안된다 -->
-    <!-- 여러 영역에 중복되는 tag들을 연결시키고 싶다면 class를 사용 -->
-    <div id="div-id" class="div-class">안녕하세요.</div>
-    <div class="div-class">반갑습니다.</div>
-    <input placeholder="내용을 입력하세요" />
-    <button onclick="output()">버튼</button>
+    <input id="target-year-input" class="target-input" />
+    <input id="target-month-input" class="target-input" />
+    <input id="target-date-input" class="target-input" />
+    <button onclick="counterMaker()">버튼</button>
   </body>
 </html>
