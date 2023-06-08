@@ -1,5 +1,6 @@
 const messageContainer = document.querySelector("#d-day-message");
 const container = document.querySelector("#d-day-container");
+const intervalIdArr = [];
 
 container.style.display = "none";
 messageContainer.innerHTML = "<h3>D-Day를 입력해 주세요.</h3>";
@@ -17,22 +18,24 @@ const dateFormMaker = function () {
   // console.log(inputYear, inputMonth, inputDate);
 };
 
-const counterMaker = function () {
+const counterMaker = function (data) {
   const nowDate = new Date();
   const dateFormat = dateFormMaker();
-  const targetDate = new Date(dateFormat).setHours(0, 0, 0, 0);
+  const targetDate = new Date(data).setHours(0, 0, 0, 0);
   const remaining = (targetDate - nowDate) / 1000;
   if (remaining <= 0) {
     // 만약, remaining이 0이라면, 타이머가 종료되었습니다. 출력
-    console.log("타이머가 종료되었습니다.");
+    // console.log("타이머가 종료되었습니다.");
     messageContainer.innerHTML = "<h3>타이머가 종료되었습니다.</h3>";
+    setClearInterval();
     return;
   } else if (isNaN(remaining)) {
     // 만약, 잘못된 날짜가 들어왔다면, 유효한 시간대가 아닙니다. 출력
-    console.log("유효한 시간대가 아닙니다.");
+    // console.log("유효한 시간대가 아닙니다.");
     messageContainer.innerHTML = "<h3>유효한 시간대가 아닙니다.</h3>";
     container.style.display = "none";
     messageContainer.style.display = "flex";
+    setClearInterval();
     return;
   }
 
@@ -48,10 +51,19 @@ const counterMaker = function () {
   const timeKeys = Object.keys(remainingObj);
   // const docKeys = Object.keys(documentObj);
 
+  const format = (time) => {
+    if (time < 10) {
+      return "0" + time;
+    } else {
+      return time;
+    }
+  };
+
   let i = 0;
   // for of 문은 주로 배열에 많이 사용
   for (let tag of documentArr) {
-    document.getElementById(tag).textContent = remainingObj[timeKeys[i]];
+    const remainingTime = format(remainingObj[timeKeys[i]]);
+    document.getElementById(tag).textContent = remainingTime;
     i++;
   }
 
@@ -90,9 +102,27 @@ const counterMaker = function () {
 const starter = function () {
   container.style.display = "flex";
   messageContainer.style.display = "none";
-  counterMaker();
-  setInterval(counterMaker, 1000);
+  const dateFormat = dateFormMaker();
+  setClearInterval();
+  counterMaker(dateFormat);
+  const intervalId = setInterval(() => {
+    counterMaker(dateFormat);
+  }, 1000);
   // for (let i = 0; i < 100; i++) {
   //   setInterval(counterMaker, 1000);
   // }
+  intervalIdArr.push(intervalId);
+};
+
+const setClearInterval = () => {
+  for (let i = 0; i < intervalIdArr.length; i++) {
+    clearInterval(intervalIdArr[i]);
+  }
+};
+
+const resetTimer = function () {
+  container.style.display = "none";
+  messageContainer.style.display = "flex";
+  messageContainer.innerHTML = "<h3>D-Day를 입력해 주세요.</h3>";
+  setClearInterval();
 };
