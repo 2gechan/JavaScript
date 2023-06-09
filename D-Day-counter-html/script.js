@@ -1,5 +1,7 @@
 const messageContainer = document.querySelector("#d-day-message");
 const container = document.querySelector("#d-day-container");
+const savedDate = localStorage.getItem("saved-date");
+
 const intervalIdArr = [];
 
 container.style.display = "none";
@@ -19,8 +21,12 @@ const dateFormMaker = function () {
 };
 
 const counterMaker = function (data) {
-  const nowDate = new Date();
+  if (data !== savedDate) {
+    localStorage.setItem("saved-date", data);
+  }
   const dateFormat = dateFormMaker();
+
+  const nowDate = new Date();
   const targetDate = new Date(data).setHours(0, 0, 0, 0);
   const remaining = (targetDate - nowDate) / 1000;
   if (remaining <= 0) {
@@ -99,10 +105,15 @@ const counterMaker = function (data) {
   // documentObj.sec.textContent = remainingObj["remainingSec"];
 };
 
-const starter = function () {
+// html에서 버튼 클릭을 통해 함수를 실행하여 매개변수가 없더라도 js를 미리 DOC에서 읽어놨기 때문에
+// 그밑에서 매개변수를 대신할 데이터가 생성된다는 것을 알고 정상 실행되게 된다.
+const starter = function (dateFormat) {
+  if (!dateFormat) {
+    dateFormat = dateFormMaker();
+  }
+
   container.style.display = "flex";
   messageContainer.style.display = "none";
-  const dateFormat = dateFormMaker();
   setClearInterval();
   counterMaker(dateFormat);
   const intervalId = setInterval(() => {
@@ -115,6 +126,7 @@ const starter = function () {
 };
 
 const setClearInterval = () => {
+  localStorage.removeItem("saved-date");
   for (let i = 0; i < intervalIdArr.length; i++) {
     clearInterval(intervalIdArr[i]);
   }
@@ -122,7 +134,15 @@ const setClearInterval = () => {
 
 const resetTimer = function () {
   container.style.display = "none";
-  messageContainer.style.display = "flex";
   messageContainer.innerHTML = "<h3>D-Day를 입력해 주세요.</h3>";
+  messageContainer.style.display = "flex";
   setClearInterval();
 };
+
+// truthy - 데이터가 있으면 조건문 실행, 반대로는 falsy - null, "", NaN 등이 있다
+if (savedDate) {
+  starter(savedDate);
+} else {
+  container.style.display = "none";
+  messageContainer.innerHTML = "<h3>D-Day를 입력해 주세요.</h3>";
+}
