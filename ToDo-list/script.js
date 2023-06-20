@@ -4,12 +4,6 @@ const todoList = document.querySelector("#todo-list");
 const savedTodoList = JSON.parse(localStorage.getItem("saved-items"));
 console.log(savedTodoList);
 
-if (savedTodoList) {
-  for (let i = 0; i < savedTodoList.length; i++) {
-    createTodo(savedTodoList[i]);
-  }
-}
-
 const createTodo = function (storageData) {
   let todoContents = todoInput.value;
   if (storageData) {
@@ -30,7 +24,13 @@ const createTodo = function (storageData) {
   // dblclick -> 더블클릭
   newLi.addEventListener("dblclick", () => {
     newLi.remove();
+    saveItemsFn();
   });
+
+  if (storageData?.complete) {
+    newLi.classList.add("complete");
+  }
+
   // 생성한 span태그에 value 저장
   newSpan.textContent = todoContents;
   newLi.appendChild(newBtn);
@@ -53,6 +53,7 @@ const deleteAll = () => {
   for (let i = 0; i < liList.length; i++) {
     liList[i].remove();
   }
+  saveItemsFn();
 };
 
 const saveItemsFn = () => {
@@ -66,5 +67,19 @@ const saveItemsFn = () => {
     saveItems.push(todoObj);
   }
 
-  localStorage.setItem("saved-items", JSON.stringify(saveItems));
+  saveItems.length === 0
+    ? localStorage.removeItem("saved-items")
+    : localStorage.setItem("saved-items", JSON.stringify(saveItems));
+
+  // if (saveItems.length === 0) {
+  //   localStorage.removeItem("saved-items");
+  // } else {
+  //   localStorage.setItem("saved-items", JSON.stringify(saveItems));
+  // }
 };
+
+if (savedTodoList) {
+  for (let i = 0; i < savedTodoList.length; i++) {
+    createTodo(savedTodoList[i]);
+  }
+}
