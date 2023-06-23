@@ -2,7 +2,7 @@ const todoInput = document.querySelector("#todo-input");
 const todoList = document.querySelector("#todo-list");
 
 const savedTodoList = JSON.parse(localStorage.getItem("saved-items"));
-console.log(savedTodoList);
+// console.log(savedTodoList);
 
 const createTodo = function (storageData) {
   let todoContents = todoInput.value;
@@ -83,3 +83,30 @@ if (savedTodoList) {
     createTodo(savedTodoList[i]);
   }
 }
+
+const weatherSearch = (positionObj) => {
+  const openWeatherRes = fetch(
+    `https://api.openweathermap.org/data/2.8/onecall?lat=${positionObj.latitude}&lon=${positionObj.longitude}&appid=5c9224a22218607cf215c8c30296302e`
+  );
+
+  console.log(openWeatherRes);
+};
+
+const accessGeo = (position) => {
+  const positionObj = {
+    latitude: position.coords.latitude,
+    longitude: position.coords.longitude,
+  };
+
+  weatherSearch(positionObj);
+};
+
+const askForLocation = function () {
+  // 첫번 째 매개변수는 위치에 접근할 수 있을 때 위도와 경도를 보여줌
+  // 두번 째 매개변수는 위치에 접근할 수 없을 때
+  navigator.geolocation.getCurrentPosition(accessGeo, (err) => {
+    console.log(err);
+  });
+};
+
+askForLocation();
