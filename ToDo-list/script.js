@@ -86,10 +86,23 @@ if (savedTodoList) {
 
 const weatherSearch = (positionObj) => {
   const openWeatherRes = fetch(
-    `https://api.openweathermap.org/data/2.8/onecall?lat=${positionObj.latitude}&lon=${positionObj.longitude}&appid=5c9224a22218607cf215c8c30296302e`
-  );
+    `https://api.openweathermap.org/data/2.5/weather?lat=${positionObj.latitude}&lon=${positionObj.longitude}&appid=5c9224a22218607cf215c8c30296302e`
+  )
+    .then((res) => {
+      // then은 fetch()를 통해 응답값을 받을때까지 기다려준다
+      // JSON.parse 는 데이터가 body만 존재할때만 사용가능
+      return res.json();
+    })
+    .then((json) => {
+      console.log(json.name, json.weather[0].description);
+    })
+    .catch((err) => {
+      // then()을 실행하는 동안 에러가 발생하면 catch로 넘어오게 된다.
+      // 정상 실행되면 catch로 넘어오지 않는다.
+      console.log(err);
+    });
 
-  console.log(openWeatherRes);
+  // console.log(openWeatherRes);
 };
 
 const accessGeo = (position) => {
@@ -102,11 +115,23 @@ const accessGeo = (position) => {
 };
 
 const askForLocation = function () {
-  // 첫번 째 매개변수는 위치에 접근할 수 있을 때 위도와 경도를 보여줌
-  // 두번 째 매개변수는 위치에 접근할 수 없을 때
+  // 첫번 째 매개변수는 getCurrentPosition 함수를 실행하여 현재 위치정보 리턴
+  // 두번 째 매개변수는 위치에 접근할 수 없을 때 실행
   navigator.geolocation.getCurrentPosition(accessGeo, (err) => {
-    console.log(err);
+    console.log(accessGeo);
   });
 };
 
 askForLocation();
+
+// const promiseTest = () => {
+//   return new Promise((resolver, reject) => {
+//     setTimeout(() => {
+//       resolver(100);
+//     }, 2000);
+//   });
+// };
+
+// promiseTest().then((res) => {
+//   console.log(res);
+// });
