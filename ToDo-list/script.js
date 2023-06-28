@@ -43,7 +43,7 @@ const createTodo = function (storageData) {
 
 const keyCodeCheck = () => {
   // keyCode : 13은 enter키
-  if (window.event.keyCode === 13 && todoInput.value !== "") {
+  if (window.event.keyCode === 13 && todoInput.value.trim() !== "") {
     createTodo();
   }
 };
@@ -84,9 +84,9 @@ if (savedTodoList) {
   }
 }
 
-const weatherSearch = (positionObj) => {
+const weatherSearch = ({ latitude, longitude }) => {
   const openWeatherRes = fetch(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${positionObj.latitude}&lon=${positionObj.longitude}&appid=5c9224a22218607cf215c8c30296302e`
+    `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=5c9224a22218607cf215c8c30296302e`
   )
     .then((res) => {
       // then은 fetch()를 통해 응답값을 받을때까지 기다려준다
@@ -94,7 +94,7 @@ const weatherSearch = (positionObj) => {
       return res.json();
     })
     .then((json) => {
-      console.log(json.name, json.weather[0].description);
+      console.log(json.name, json.weather[0].main);
     })
     .catch((err) => {
       // then()을 실행하는 동안 에러가 발생하면 catch로 넘어오게 된다.
@@ -105,10 +105,14 @@ const weatherSearch = (positionObj) => {
   // console.log(openWeatherRes);
 };
 
-const accessGeo = (position) => {
+const accessGeo = ({ coords }) => {
+  const { latitude, longitude } = coords;
+
   const positionObj = {
-    latitude: position.coords.latitude,
-    longitude: position.coords.longitude,
+    // shorthand property
+    // key와 value가 같으면 ':'생략가능
+    latitude,
+    longitude,
   };
 
   weatherSearch(positionObj);
