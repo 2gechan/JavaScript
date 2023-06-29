@@ -2,6 +2,7 @@ const todoInput = document.querySelector("#todo-input");
 const todoList = document.querySelector("#todo-list");
 
 const savedTodoList = JSON.parse(localStorage.getItem("saved-items"));
+const savedWeatherData = JSON.parse(localStorage.getItem("saved-weather"));
 // console.log(savedTodoList);
 
 const createTodo = function (storageData) {
@@ -84,6 +85,27 @@ if (savedTodoList) {
   }
 }
 
+const weatherDataActive = ({ location, weather }) => {
+  const weatherMainList = ["Clear", "Clouds", "Rain", "Thunderstorm"];
+  weather = weatherMainList.includes(weather) ? weather : "Clear";
+  const locationNameTag = document.querySelector("#location-name-tag");
+  locationNameTag.textContent = location;
+
+  document.body.style.backgroundImage = `url("./images/${weather}.jpg")`;
+
+  if (
+    !savedWeatherData ||
+    savedWeatherData.location !== location ||
+    savedWeatherData.weather !== weather
+  ) {
+    console.log("조건식 성립");
+    localStorage.setItem(
+      "saved-weather",
+      JSON.stringify({ location, weather })
+    );
+  }
+};
+
 const weatherSearch = ({ latitude, longitude }) => {
   const openWeatherRes = fetch(
     `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=5c9224a22218607cf215c8c30296302e`
@@ -94,7 +116,11 @@ const weatherSearch = ({ latitude, longitude }) => {
       return res.json();
     })
     .then((json) => {
-      console.log(json.name, json.weather[0].main);
+      const weatherData = {
+        location: json.name,
+        weather: json.weather[0].main,
+      };
+      weatherDataActive(weatherData);
     })
     .catch((err) => {
       // then()을 실행하는 동안 에러가 발생하면 catch로 넘어오게 된다.
@@ -122,11 +148,14 @@ const askForLocation = function () {
   // 첫번 째 매개변수는 getCurrentPosition 함수를 실행하여 현재 위치정보 리턴
   // 두번 째 매개변수는 위치에 접근할 수 없을 때 실행
   navigator.geolocation.getCurrentPosition(accessGeo, (err) => {
-    console.log(accessGeo);
+    console.log(err);
   });
 };
 
 askForLocation();
+if (savedWeatherData) {
+  weatherDataActive(savedWeatherData);
+}
 
 // const promiseTest = () => {
 //   return new Promise((resolver, reject) => {
